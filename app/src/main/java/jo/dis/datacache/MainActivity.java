@@ -1,7 +1,5 @@
 package jo.dis.datacache;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     private final String BYTE = "byte";
     private final String OBJECT = "object";
     private final String LIST = "list";
-    private final String BITMAP = "bitmap";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +65,6 @@ public class MainActivity extends AppCompatActivity {
         items.add("item4");
         items.add("item5");
         DataCache.putObject(LIST, items);
-        // 设置bitmap
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-        DataCache.putBitmap(BITMAP, bitmap);
 
         textView1.setText(DataCache.getString(STRING));
         textView2.setText(DataCache.getInt(INT, 0) + "");
@@ -78,13 +72,12 @@ public class MainActivity extends AppCompatActivity {
         textView4.setText(DataCache.getDouble(DOUBLE, 0.0d) + "");
         textView5.setText(DataCache.getFloat(FLOAT, 0.0f) + "");
         textView6.setText(DataCache.getBoolean(BOOLEAN, false) + "");
-        textView7.setText(new String(DataCache.getBytes(BYTE)));
-        People p = (People) DataCache.getObject(OBJECT);
+        byte[] newByte = DataCache.getBytes(BYTE);
+        textView7.setText(new String(newByte));
+        People p = DataCache.getObject(OBJECT);
         textView8.setText(p.getAge() + " " + p.getName());
-        List<String> lists = (List<String>) DataCache.getObject(LIST);
+        List<String> lists = DataCache.getObject(LIST);
         textView9.setText(lists.get(3));
-        Bitmap bm = DataCache.getBitmap(BITMAP);
-        iv.setImageBitmap(bm);
 
         // 泛型设置
         People pp = new People(23, "Jo");
@@ -101,5 +94,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

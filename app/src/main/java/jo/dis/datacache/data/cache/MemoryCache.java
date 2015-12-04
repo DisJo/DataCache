@@ -1,7 +1,5 @@
 package jo.dis.datacache.data.cache;
 
-import android.graphics.Bitmap;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -73,29 +71,8 @@ public class MemoryCache implements Cache {
     }
 
     @Override
-    public Bitmap getBitmap(String key) {
-        if (hashMap.containsKey(key))
-            return (Bitmap) hashMap.get(key);
-        return null;
-    }
-
-    @Override
     public void put(String key, Object value) {
-        if (value instanceof Bitmap || value instanceof String) {
-            hashMap.put(key, value);
-        } else if (value instanceof Integer) {
-            hashMap.put(key, new Integer((int) value));
-        } else if (value instanceof Long) {
-            hashMap.put(key, new Long((long) value));
-        } else if (value instanceof Double) {
-            hashMap.put(key, new Double((double) value));
-        } else if (value instanceof Float) {
-            hashMap.put(key, new Float((float) value));
-        } else if (value instanceof Boolean) {
-            hashMap.put(key, new Boolean((boolean) value));
-        } else {
-            hashMap.put(key, value);
-        }
+        hashMap.put(key, value);
     }
 
     @Override

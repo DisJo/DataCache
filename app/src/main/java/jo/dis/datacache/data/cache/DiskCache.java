@@ -1,8 +1,5 @@
 package jo.dis.datacache.data.cache;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -91,8 +88,7 @@ public class DiskCache implements Cache {
             key = hashKeyForDisk(key);
             DiskLruCache.Snapshot snapshot = diskLruCache.get(key);
             if (snapshot != null && snapshot.getInputStream(0) != null) {
-                ObjectInputStream ois =
-                        new ObjectInputStream(diskLruCache.get(key).getInputStream(0));
+                ObjectInputStream ois = new ObjectInputStream(snapshot.getInputStream(0));
                 return ois.readObject();
             } else {
                 return null;
@@ -109,7 +105,7 @@ public class DiskCache implements Cache {
             key = hashKeyForDisk(key);
             DiskLruCache.Snapshot snapshot = diskLruCache.get(key);
             if (snapshot != null && snapshot.getInputStream(0) != null)
-                return write(diskLruCache.get(key).getInputStream(0));
+                return write(snapshot.getInputStream(0));
             else
                 return null;
         } catch (IOException e) {
@@ -119,22 +115,13 @@ public class DiskCache implements Cache {
     }
 
     @Override
-    public Bitmap getBitmap(String key) {
-        byte[] bytes = getBytes(key);
-        if (bytes != null)
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        return null;
-    }
-
-    @Override
     public void put(String key, Object value) {
         try {
             key = hashKeyForDisk(key);
             DiskLruCache.Editor editor = diskLruCache.edit(key);
             OutputStream os = editor.newOutputStream(0);
-            if (value instanceof Bitmap) {
-                Bitmap bitmap = (Bitmap) value;
-                os.write(bitmap2Bytes(bitmap));
+            if (value instanceof byte[]) {
+                os.write((byte[]) value);
                 os.close();
             } else if (value instanceof String) {
                 os.write(((String) value).getBytes());
@@ -186,18 +173,6 @@ public class DiskCache implements Cache {
             e.printStackTrace();
         }
         return out.toByteArray();
-    }
-
-    private byte[] bitmap2Bytes(Bitmap bm) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        try {
-            baos.flush();
-            baos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return baos.toByteArray();
     }
 
     public String hashKeyForDisk(String key) {

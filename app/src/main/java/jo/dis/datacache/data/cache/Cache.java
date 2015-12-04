@@ -1,7 +1,5 @@
 package jo.dis.datacache.data.cache;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by Dis on 15/12/1.
  */
@@ -22,8 +20,6 @@ public interface Cache {
     Object getObject(String key);
 
     byte[] getBytes(String key);
-
-    Bitmap getBitmap(String key);
 
 
     void put(String key, Object value);

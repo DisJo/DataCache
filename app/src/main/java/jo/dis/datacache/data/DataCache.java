@@ -1,9 +1,9 @@
 package jo.dis.datacache.data;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import java.lang.reflect.Type;
+
 import jo.dis.datacache.data.cache.DiskCache;
 import jo.dis.datacache.data.cache.MemoryCache;
 
@@ -38,32 +38,32 @@ public class DataCache {
 
     public static void putInt(String key, int value) {
         checkInit();
-        memoryCache.put(key, new Integer(value));
-        diskCache.put(key, new Integer(value));
+        memoryCache.put(key, value);
+        diskCache.put(key, Integer.valueOf(value));
     }
 
     public static void putLong(String key, long value) {
         checkInit();
-        memoryCache.put(key, new Long(value));
-        diskCache.put(key, new Long(value));
+        memoryCache.put(key, value);
+        diskCache.put(key, Long.valueOf(value));
     }
 
     public static void putDouble(String key, double value) {
         checkInit();
-        memoryCache.put(key, new Double(value));
-        diskCache.put(key, new Double(value));
+        memoryCache.put(key, value);
+        diskCache.put(key, Double.valueOf(value));
     }
 
     public static void putFloat(String key, float value) {
         checkInit();
-        memoryCache.put(key, new Float(value));
-        diskCache.put(key, new Float(value));
+        memoryCache.put(key, value);
+        diskCache.put(key, Float.valueOf(value));
     }
 
     public static void putBoolean(String key, boolean value) {
         checkInit();
-        memoryCache.put(key, new Boolean(value));
-        diskCache.put(key, new Boolean(value));
+        memoryCache.put(key, value);
+        diskCache.put(key, Boolean.valueOf(value));
     }
 
     public static void putObject(String key, Object value) {
@@ -76,12 +76,6 @@ public class DataCache {
         checkInit();
         memoryCache.put(key, bytes);
         diskCache.put(key, bytes);
-    }
-
-    public static void putBitmap(String key, Bitmap bitmap) {
-        checkInit();
-        memoryCache.put(key, bitmap);
-        diskCache.put(key, bitmap);
     }
 
     public static String getString(String key) {
@@ -102,12 +96,12 @@ public class DataCache {
             value = diskCache.getInt(key);
             if (value != null) {
                 memoryCache.put(key, value);
-                return value.intValue();
+                return value;
             } else {
                 return defalut;
             }
         }
-        return value.intValue();
+        return value;
     }
 
     public static long getLong(String key, long defalut) {
@@ -117,12 +111,12 @@ public class DataCache {
             value = diskCache.getLong(key);
             if (value != null) {
                 memoryCache.put(key, value);
-                return value.longValue();
+                return value;
             } else {
                 return defalut;
             }
         }
-        return value.longValue();
+        return value;
     }
 
     public static double getDouble(String key, double defalut) {
@@ -132,12 +126,12 @@ public class DataCache {
             value = diskCache.getDouble(key);
             if (value != null) {
                 memoryCache.put(key, value);
-                return value.doubleValue();
+                return value;
             } else {
                 return defalut;
             }
         }
-        return value.doubleValue();
+        return value;
     }
 
     public static float getFloat(String key, float defalut) {
@@ -147,12 +141,12 @@ public class DataCache {
             value = diskCache.getFloat(key);
             if (value != null) {
                 memoryCache.put(key, value);
-                return value.floatValue();
+                return value;
             } else {
                 return defalut;
             }
         }
-        return value.floatValue();
+        return value;
     }
 
     public static boolean getBoolean(String key, boolean defalut) {
@@ -162,42 +156,35 @@ public class DataCache {
             value = diskCache.getBoolean(key);
             if (value != null) {
                 memoryCache.put(key, value);
-                return value.booleanValue();
+                return value;
             } else {
                 return defalut;
             }
         }
-        return value.booleanValue();
+        return value;
     }
 
-    public static Object getObject(String key) {
+    @SuppressWarnings("unchecked")
+    public static <T> T getObject(String key) {
         checkInit();
         Object object = memoryCache.getObject(key);
-        if (object == null)
+        if (object == null) {
             object = diskCache.getObject(key);
-        if (object != null)
-            memoryCache.put(key, object);
-        return object;
+            if (object != null)
+                memoryCache.put(key, object);
+        }
+        return (T) object;
     }
 
     public static byte[] getBytes(String key) {
         checkInit();
         byte[] bytes = memoryCache.getBytes(key);
-        if (bytes == null)
+        if (bytes == null || bytes.length == 0) {
             bytes = diskCache.getBytes(key);
-        if (bytes != null)
-            memoryCache.put(key, bytes);
+            if (bytes != null && bytes.length > 0)
+                memoryCache.put(key, bytes);
+        }
         return bytes;
-    }
-
-    public static Bitmap getBitmap(String key) {
-        checkInit();
-        Bitmap bitmap = memoryCache.getBitmap(key);
-        if (bitmap == null)
-            bitmap = diskCache.getBitmap(key);
-        if (bitmap != null)
-            memoryCache.put(key, bitmap);
-        return bitmap;
     }
 
     public static void clearData() {
@@ -231,8 +218,6 @@ public class DataCache {
             putFloat(key, (Float) value);
         } else if (type == TypeToken.fromClass(Boolean.class).getType()) {
             putBoolean(key, (Boolean) value);
-        } else if (type == TypeToken.fromClass(Bitmap.class).getType()) {
-            putBitmap(key, (Bitmap) value);
         } else if (type == TypeToken.fromClass(byte[].class).getType()){
             putBytes(key, (byte[]) value);
         } else {
@@ -396,27 +381,6 @@ public class DataCache {
             @Override
             protected Boolean doInBackground(Void... params) {
                 putBytes(key, value);
-                return true;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                super.onPostExecute(aBoolean);
-                if (callback != null)
-                    callback.finish();
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    public static void putBitmapAsync(String key, Bitmap value) {
-        putBitmapAsync(key, value, null);
-    }
-
-    public static void putBitmapAsync(final String key, final Bitmap value, final Callback callback) {
-        new AsyncTask<Void, Integer, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                putBitmap(key, value);
                 return true;
             }
 
