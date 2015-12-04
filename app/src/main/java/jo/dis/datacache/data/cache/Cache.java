@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 /**
  * Created by Dis on 15/12/1.
  */
-public interface Cache<T> {
+public interface Cache {
 
     String getString(String key);
 
