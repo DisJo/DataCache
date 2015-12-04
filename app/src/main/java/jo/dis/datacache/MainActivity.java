@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         items.add("item5");
         DataCache.putObject(LIST, items);
         // 设置bitmap
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
         DataCache.putBitmap(BITMAP, bitmap);
 
         textView1.setText(DataCache.getString(STRING));
