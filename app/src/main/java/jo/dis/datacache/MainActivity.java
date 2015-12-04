@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         TextView textView1 = (TextView) findViewById(R.id.tv);
         TextView textView2 = (TextView) findViewById(R.id.tv1);
         TextView textView3 = (TextView) findViewById(R.id.tv2);
