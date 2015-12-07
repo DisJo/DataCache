@@ -74,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
         textView6.setText(DataCache.getBoolean(BOOLEAN, false) + "");
         byte[] newByte = DataCache.getBytes(BYTE);
         textView7.setText(new String(newByte));
-        People p = DataCache.getObject(OBJECT);
+        People p = (People) DataCache.getObject(OBJECT);
         textView8.setText(p.getAge() + " " + p.getName());
-        List<String> lists = DataCache.getObject(LIST);
+        List<String> lists = (List<String>) DataCache.getObject(LIST);
         textView9.setText(lists.get(3));
 
         // 泛型设置

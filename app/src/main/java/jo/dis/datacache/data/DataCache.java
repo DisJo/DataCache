@@ -165,7 +165,7 @@ public class DataCache {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T getObject(String key) {
+    public static Object getObject(String key) {
         checkInit();
         Object object = memoryCache.getObject(key);
         if (object == null) {
@@ -173,7 +173,7 @@ public class DataCache {
             if (object != null)
                 memoryCache.put(key, object);
         }
-        return (T) object;
+        return object;
     }
 
     public static byte[] getBytes(String key) {
