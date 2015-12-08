@@ -1,4 +1,4 @@
-package jo.dis.datacache.data.cache;
+package jo.dis.library.data.cache;
 
 /**
  * Created by Dis on 15/12/1.

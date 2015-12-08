@@ -1,4 +1,4 @@
-package jo.dis.datacache.data.cache;
+package jo.dis.library.data.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import jo.dis.datacache.data.DiskLruCache;
+import jo.dis.library.data.DiskLruCache;
 
 /**
  * Created by Dis on 15/12/1.

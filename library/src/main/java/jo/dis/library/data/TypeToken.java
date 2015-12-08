@@ -1,4 +1,4 @@
-package jo.dis.datacache.data;
+package jo.dis.library.data;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jo.dis.datacache.data;
+package jo.dis.library.data;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;

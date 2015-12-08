@@ -1,11 +1,11 @@
-package jo.dis.datacache.data;
+package jo.dis.library.data;
 
 import android.os.AsyncTask;
 
 import java.lang.reflect.Type;
 
-import jo.dis.datacache.data.cache.DiskCache;
-import jo.dis.datacache.data.cache.MemoryCache;
+import jo.dis.library.data.cache.DiskCache;
+import jo.dis.library.data.cache.MemoryCache;
 
 /**
  * Created by Dis on 15/12/1.

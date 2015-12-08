@@ -1,4 +1,4 @@
-package jo.dis.datacache.data.cache;
+package jo.dis.library.data.cache;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
