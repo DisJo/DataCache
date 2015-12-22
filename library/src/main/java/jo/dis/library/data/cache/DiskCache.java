@@ -18,17 +18,17 @@ import jo.dis.library.data.DiskLruCache;
 public class DiskCache implements Cache {
 
     private DiskLruCache diskLruCache;
-    private String path;
+    private File cacheDir;
 
     /**
-     * @param path      缓存路径
+     * @param cacheDir      缓存路径
      * @param version   版本号
      * @param cacheSize 缓存大小
      */
-    public DiskCache(String path, int version, int cacheSize) {
-        this.path = path;
+    public DiskCache(File cacheDir, int version, int cacheSize) {
+        this.cacheDir = cacheDir;
         try {
-            diskLruCache = DiskLruCache.open(new File(path), version, 1, cacheSize);
+            diskLruCache = DiskLruCache.open(cacheDir, version, 1, cacheSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -150,7 +150,7 @@ public class DiskCache implements Cache {
 
     @Override
     public void clear() {
-        File file = new File(path);
+        File file = this.cacheDir;
         if (file.exists()) {
             File[] files = file.listFiles();
             for (File f : files) {
@@ -175,7 +175,7 @@ public class DiskCache implements Cache {
         return out.toByteArray();
     }
 
-    public String hashKeyForDisk(String key) {
+    private String hashKeyForDisk(String key) {
         String cacheKey;
         try {
             final MessageDigest mDigest = MessageDigest.getInstance("MD5");

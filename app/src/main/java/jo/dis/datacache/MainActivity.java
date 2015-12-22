@@ -39,24 +39,27 @@ public class MainActivity extends AppCompatActivity {
         TextView textView9 = (TextView) findViewById(R.id.tv8);
         ImageView iv = (ImageView) findViewById(R.id.iv);
 
+        String cachePath = getExternalCacheDir().getPath();
+        final DataCache dataCache = DataCache.get(this, cachePath);
+
         // 设置字符串
         String str = "Hello world!";
-        DataCache.putString(STRING, str);
+        dataCache.putString(STRING, str);
         // 设置int
-        DataCache.putInt(INT, 123);
+        dataCache.putInt(INT, 123);
         // 设置long
-        DataCache.putLong(LONG, 20000l);
+        dataCache.putLong(LONG, 20000l);
         // 设置double
-        DataCache.putDouble(DOUBLE, 2.1d);
+        dataCache.putDouble(DOUBLE, 2.1d);
         // 设置flot
-        DataCache.putFloat(FLOAT, 2.2f);
+        dataCache.putFloat(FLOAT, 2.2f);
         // 设置boolean
-        DataCache.putBoolean(BOOLEAN, true);
+        dataCache.putBoolean(BOOLEAN, true);
         // 设置byte[]
-        DataCache.putBytes(BYTE, str.getBytes());
+        dataCache.putBytes(BYTE, str.getBytes());
         // 设置类
         People people = new People(21, "Dis");
-        DataCache.putObject(OBJECT, people);
+        dataCache.putObject(OBJECT, people);
         // 设置集合
         List<String> items = new ArrayList<>();
         items.add("item1");
@@ -64,32 +67,32 @@ public class MainActivity extends AppCompatActivity {
         items.add("item3");
         items.add("item4");
         items.add("item5");
-        DataCache.putObject(LIST, items);
+        dataCache.putObject(LIST, items);
 
-        textView1.setText(DataCache.getString(STRING));
-        textView2.setText(DataCache.getInt(INT, 0) + "");
-        textView3.setText(DataCache.getLong(LONG, 0l) + "");
-        textView4.setText(DataCache.getDouble(DOUBLE, 0.0d) + "");
-        textView5.setText(DataCache.getFloat(FLOAT, 0.0f) + "");
-        textView6.setText(DataCache.getBoolean(BOOLEAN, false) + "");
-        byte[] newByte = DataCache.getBytes(BYTE);
+        textView1.setText(dataCache.getString(STRING));
+        textView2.setText(dataCache.getInt(INT, 0) + "");
+        textView3.setText(dataCache.getLong(LONG, 0l) + "");
+        textView4.setText(dataCache.getDouble(DOUBLE, 0.0d) + "");
+        textView5.setText(dataCache.getFloat(FLOAT, 0.0f) + "");
+        textView6.setText(dataCache.getBoolean(BOOLEAN, false) + "");
+        byte[] newByte = dataCache.getBytes(BYTE);
         textView7.setText(new String(newByte));
-        People p = (People) DataCache.getObject(OBJECT);
+        People p = (People) dataCache.getObject(OBJECT);
         textView8.setText(p.getAge() + " " + p.getName());
-        List<String> lists = (List<String>) DataCache.getObject(LIST);
+        List<String> lists = (List<String>) dataCache.getObject(LIST);
         textView9.setText(lists.get(3));
 
         // 泛型设置
         People pp = new People(23, "Jo");
-        DataCache.put("T", pp);
-        People ppp = (People) DataCache.getObject("T");
+        dataCache.put("T", pp);
+        People ppp = (People) dataCache.getObject("T");
         Log.d("T=================>", "People age:" + ppp.getAge() + " " + "name:" + ppp.getName());
 
         // 异步设置
-        DataCache.putStringAsync("Async", "asdfghjkl", new DataCache.Callback() {
+        dataCache.putStringAsync("Async", "asdfghjkl", new DataCache.Callback() {
             @Override
             public void finish() {
-                String str = DataCache.getString("Async");
+                String str = dataCache.getString("Async");
                 Log.d("A=================>", str);
             }
         });

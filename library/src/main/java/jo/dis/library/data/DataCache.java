@@ -1,8 +1,12 @@
 package jo.dis.library.data;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
+import java.io.File;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 import jo.dis.library.data.cache.DiskCache;
 import jo.dis.library.data.cache.MemoryCache;
@@ -12,74 +16,94 @@ import jo.dis.library.data.cache.MemoryCache;
  */
 public class DataCache {
 
-    private static MemoryCache memoryCache = null;
-    private static DiskCache diskCache = null;
+    private static final String CACHE_NAME = "DataCache";
+    private static final int MAX_SIZE = 1000 * 1000 * 50; // 50 mb
+    private static Map<String, DataCache> mInstanceMap = new HashMap<>();
+    private MemoryCache memoryCache = null;
+    private DiskCache diskCache = null;
 
-    /**
-     *
-     * @param path      缓存路径
-     * @param cacheSize 缓存大小
-     */
-    public static void init(String path, int cacheSize) {
+    public static DataCache get(Context context) {
+        String cachePath = context.getCacheDir().getPath();
+        File cacheDir = new File(cachePath + File.separator + CACHE_NAME);
+        return get(cacheDir, MAX_SIZE);
+    }
+
+    public static DataCache get(Context context, String cacheName) {
+        String cachePath = context.getCacheDir().getPath();
+        File cacheDir = new File(cachePath + File.separator + cacheName);
+        return get(cacheDir, MAX_SIZE);
+    }
+
+    public static DataCache get(Context context, int cacheSize) {
+        String cachePath = context.getCacheDir().getPath();
+        File cacheDir = new File(cachePath + File.separator + CACHE_NAME);
+        return get(cacheDir, cacheSize);
+    }
+
+    public static DataCache get(Context context, String cacheName, int cacheSize) {
+        String cachePath = context.getCacheDir().getPath();
+        File cacheDir = new File(cachePath + File.separator + cacheName);
+        return get(cacheDir, cacheSize);
+    }
+
+    public static DataCache get(File cacheDir, int cacheSize) {
+        DataCache dataCache = mInstanceMap.get(cacheDir.getAbsolutePath());
+        if (dataCache == null) {
+            dataCache = new DataCache(cacheDir, cacheSize);
+            mInstanceMap.put(cacheDir.getAbsolutePath(), dataCache);
+        }
+        return dataCache;
+    }
+
+    private DataCache(File cacheDir, int cacheSize) {
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+            throw new RuntimeException("can't make dirs in " + cacheDir.getAbsolutePath());
+        }
         memoryCache = new MemoryCache();
-        diskCache = new DiskCache(path, 1, cacheSize);
+        diskCache = new DiskCache(cacheDir, 1, cacheSize);
     }
 
-    private static void checkInit() {
-        if (memoryCache == null || diskCache == null)
-            throw new RuntimeException("DataCache not initialized.");
-    }
-
-    public static void putString(String key, String value) {
-        checkInit();
+    public void putString(String key, String value) {
         memoryCache.put(key, value);
         diskCache.put(key, value);
     }
 
-    public static void putInt(String key, int value) {
-        checkInit();
+    public void putInt(String key, int value) {
         memoryCache.put(key, value);
         diskCache.put(key, Integer.valueOf(value));
     }
 
-    public static void putLong(String key, long value) {
-        checkInit();
+    public void putLong(String key, long value) {
         memoryCache.put(key, value);
         diskCache.put(key, Long.valueOf(value));
     }
 
-    public static void putDouble(String key, double value) {
-        checkInit();
+    public void putDouble(String key, double value) {
         memoryCache.put(key, value);
         diskCache.put(key, Double.valueOf(value));
     }
 
-    public static void putFloat(String key, float value) {
-        checkInit();
+    public void putFloat(String key, float value) {
         memoryCache.put(key, value);
         diskCache.put(key, Float.valueOf(value));
     }
 
-    public static void putBoolean(String key, boolean value) {
-        checkInit();
+    public void putBoolean(String key, boolean value) {
         memoryCache.put(key, value);
         diskCache.put(key, Boolean.valueOf(value));
     }
 
-    public static void putObject(String key, Object value) {
-        checkInit();
+    public void putObject(String key, Object value) {
         memoryCache.put(key, value);
         diskCache.put(key, value);
     }
 
-    public static void putBytes(String key, byte[] bytes) {
-        checkInit();
+    public void putBytes(String key, byte[] bytes) {
         memoryCache.put(key, bytes);
         diskCache.put(key, bytes);
     }
 
-    public static String getString(String key) {
-        checkInit();
+    public String getString(String key) {
         String value = memoryCache.getString(key);
         if (value == null) {
             value = diskCache.getString(key);
@@ -89,8 +113,7 @@ public class DataCache {
         return value;
     }
 
-    public static int getInt(String key, int defalut) {
-        checkInit();
+    public int getInt(String key, int defalut) {
         Integer value = memoryCache.getInt(key);
         if (value == null) {
             value = diskCache.getInt(key);
@@ -104,8 +127,7 @@ public class DataCache {
         return value;
     }
 
-    public static long getLong(String key, long defalut) {
-        checkInit();
+    public long getLong(String key, long defalut) {
         Long value = memoryCache.getLong(key);
         if (value == null) {
             value = diskCache.getLong(key);
@@ -119,8 +141,7 @@ public class DataCache {
         return value;
     }
 
-    public static double getDouble(String key, double defalut) {
-        checkInit();
+    public double getDouble(String key, double defalut) {
         Double value = memoryCache.getDouble(key);
         if (value == null) {
             value = diskCache.getDouble(key);
@@ -134,8 +155,7 @@ public class DataCache {
         return value;
     }
 
-    public static float getFloat(String key, float defalut) {
-        checkInit();
+    public float getFloat(String key, float defalut) {
         Float value = memoryCache.getFloat(key);
         if (value == null) {
             value = diskCache.getFloat(key);
@@ -149,8 +169,7 @@ public class DataCache {
         return value;
     }
 
-    public static boolean getBoolean(String key, boolean defalut) {
-        checkInit();
+    public boolean getBoolean(String key, boolean defalut) {
         Boolean value = memoryCache.getBoolean(key);
         if (value == null) {
             value = diskCache.getBoolean(key);
@@ -165,8 +184,7 @@ public class DataCache {
     }
 
     @SuppressWarnings("unchecked")
-    public static Object getObject(String key) {
-        checkInit();
+    public Object getObject(String key) {
         Object object = memoryCache.getObject(key);
         if (object == null) {
             object = diskCache.getObject(key);
@@ -176,8 +194,7 @@ public class DataCache {
         return object;
     }
 
-    public static byte[] getBytes(String key) {
-        checkInit();
+    public byte[] getBytes(String key) {
         byte[] bytes = memoryCache.getBytes(key);
         if (bytes == null || bytes.length == 0) {
             bytes = diskCache.getBytes(key);
@@ -187,19 +204,17 @@ public class DataCache {
         return bytes;
     }
 
-    public static void clearData() {
-        checkInit();
+    public void clearData() {
         memoryCache.clear();
         diskCache.clear();
     }
 
-    public static void remove(String key) {
-        checkInit();
+    public void remove(String key) {
         diskCache.remove(key);
         memoryCache.remove(key);
     }
 
-    public static <T> void put(String key, T value) {
+    public <T> void put(String key, T value) {
         if (key == null || "".equals(key) || value == null) {
             throw new NullPointerException("key or value can not be null.");
         }
@@ -225,11 +240,11 @@ public class DataCache {
         }
     }
 
-    public static <T> void putAsync(String key, T value) {
+    public <T> void putAsync(String key, T value) {
         putAsync(key, value, null);
     }
 
-    public static <T> void putAsync(final String key, final T value, final Callback callback) {
+    public <T> void putAsync(final String key, final T value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -246,11 +261,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putStringAsync(String key, String value) {
+    public void putStringAsync(String key, String value) {
         putStringAsync(key, value, null);
     }
 
-    public static void putStringAsync(final String key, final String value, final Callback callback) {
+    public void putStringAsync(final String key, final String value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -267,11 +282,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putIntAsync(String key, int value) {
+    public void putIntAsync(String key, int value) {
         putIntAsync(key, value, null);
     }
 
-    public static void putIntAsync(final String key, final int value, final Callback callback) {
+    public void putIntAsync(final String key, final int value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -288,11 +303,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putLongAsync(String key, long value) {
+    public void putLongAsync(String key, long value) {
         putLongAsync(key, value, null);
     }
 
-    public static void putLongAsync(final String key, final long value, final Callback callback) {
+    public void putLongAsync(final String key, final long value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -309,11 +324,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putDoubleAsync(String key, double value) {
+    public void putDoubleAsync(String key, double value) {
         putDoubleAsync(key, value, null);
     }
 
-    public static void putDoubleAsync(final String key, final double value, final Callback callback) {
+    public void putDoubleAsync(final String key, final double value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -330,11 +345,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putFloatAsync(String key, float value) {
+    public void putFloatAsync(String key, float value) {
         putFloatAsync(key, value, null);
     }
 
-    public static void putFloatAsync(final String key, final float value, final Callback callback) {
+    public void putFloatAsync(final String key, final float value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -351,11 +366,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putBooleanAsync(String key, boolean value) {
+    public void putBooleanAsync(String key, boolean value) {
         putBooleanAsync(key, value, null);
     }
 
-    public static void putBooleanAsync(final String key, final boolean value, final Callback callback) {
+    public void putBooleanAsync(final String key, final boolean value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -372,11 +387,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putBytesAsync(String key, byte[] value) {
+    public void putBytesAsync(String key, byte[] value) {
         putBytesAsync(key, value, null);
     }
 
-    public static void putBytesAsync(final String key, final byte[] value, final Callback callback) {
+    public void putBytesAsync(final String key, final byte[] value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -393,11 +408,11 @@ public class DataCache {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void putObjectAsync(String key, Object value) {
+    public void putObjectAsync(String key, Object value) {
         putObjectAsync(key, value, null);
     }
 
-    public static void putObjectAsync(final String key, final Object value, final Callback callback) {
+    public void putObjectAsync(final String key, final Object value, final Callback callback) {
         new AsyncTask<Void, Integer, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
