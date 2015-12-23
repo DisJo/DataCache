@@ -126,8 +126,9 @@ public class DataCache {
          * Note: when the version update is automatically cleaned up disk space
          * @param appVersion
          */
-        public void setAppVersion(int appVersion) {
+        public Config setAppVersion(int appVersion) {
             this.appVersion = appVersion;
+            return config;
         }
     }
 
