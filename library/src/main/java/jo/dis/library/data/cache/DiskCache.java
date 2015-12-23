@@ -21,9 +21,9 @@ public class DiskCache implements Cache {
     private File cacheDir;
 
     /**
-     * @param cacheDir      缓存路径
-     * @param version   版本号
-     * @param cacheSize 缓存大小
+     * @param cacheDir
+     * @param version
+     * @param cacheSize
      */
     public DiskCache(File cacheDir, int version, int cacheSize) {
         this.cacheDir = cacheDir;

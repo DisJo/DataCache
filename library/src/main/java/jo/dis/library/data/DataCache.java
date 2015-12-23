@@ -16,37 +16,39 @@ import jo.dis.library.data.cache.MemoryCache;
  */
 public class DataCache {
 
-    private static final String CACHE_NAME = "DataCache";
-    private static final int MAX_SIZE = 1000 * 1000 * 50; // 50 mb
+    private static final String CACHE_NAME = "datacache";
+    private static final int MAX_SIZE = 1000 * 1000 * 30;   // 30mb
+    private static final int APP_VERSION = 1;
     private static Map<String, DataCache> mInstanceMap = new HashMap<>();
     private MemoryCache memoryCache = null;
     private DiskCache diskCache = null;
+    private static Config config = new Config();
 
     public static DataCache get(Context context) {
-        String cachePath = context.getCacheDir().getPath();
-        File cacheDir = new File(cachePath + File.separator + CACHE_NAME);
-        return get(cacheDir, MAX_SIZE);
+        String cachePath = getCachePath(context, config.cacheDir);
+        File cacheDir = new File(cachePath + File.separator + config.cacheName);
+        return get(cacheDir, config.maxSize);
     }
 
     public static DataCache get(Context context, String cacheName) {
-        String cachePath = context.getCacheDir().getPath();
+        String cachePath = getCachePath(context, config.cacheDir);
         File cacheDir = new File(cachePath + File.separator + cacheName);
-        return get(cacheDir, MAX_SIZE);
+        return get(cacheDir, config.maxSize);
     }
 
     public static DataCache get(Context context, int cacheSize) {
-        String cachePath = context.getCacheDir().getPath();
-        File cacheDir = new File(cachePath + File.separator + CACHE_NAME);
+        String cachePath = getCachePath(context, config.cacheDir);
+        File cacheDir = new File(cachePath + File.separator + config.cacheName);
         return get(cacheDir, cacheSize);
     }
 
     public static DataCache get(Context context, String cacheName, int cacheSize) {
-        String cachePath = context.getCacheDir().getPath();
+        String cachePath = getCachePath(context, config.cacheDir);
         File cacheDir = new File(cachePath + File.separator + cacheName);
         return get(cacheDir, cacheSize);
     }
 
-    public static DataCache get(File cacheDir, int cacheSize) {
+    private static DataCache get(File cacheDir, int cacheSize) {
         DataCache dataCache = mInstanceMap.get(cacheDir.getAbsolutePath());
         if (dataCache == null) {
             dataCache = new DataCache(cacheDir, cacheSize);
@@ -60,7 +62,73 @@ public class DataCache {
             throw new RuntimeException("can't make dirs in " + cacheDir.getAbsolutePath());
         }
         memoryCache = new MemoryCache();
-        diskCache = new DiskCache(cacheDir, 1, cacheSize);
+        diskCache = new DiskCache(cacheDir, config.appVersion, cacheSize);
+    }
+
+    private static String getCachePath(Context context, File cachePath) {
+        String cachePathStr;
+        if (cachePath != null) {
+            if (!cachePath.exists() && !cachePath.mkdirs())
+                cachePathStr = context.getCacheDir().getPath();
+            else
+                cachePathStr = cachePath.getPath();
+        } else {
+            cachePathStr = context.getCacheDir().getPath();
+        }
+        return cachePathStr;
+    }
+
+    public static Config config() {
+        return config;
+    }
+
+    public static class Config {
+        private File cacheDir;
+        private String cacheName = CACHE_NAME;
+        private int maxSize = MAX_SIZE;
+        private int appVersion = APP_VERSION;
+
+        public File getCacheDir() {
+            return cacheDir;
+        }
+
+        public Config setCacheDir(File cacheDir) {
+            if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+                throw new RuntimeException("can't make dirs in " + cacheDir.getAbsolutePath());
+            }
+            this.cacheDir = cacheDir;
+            return this;
+        }
+
+        public String getCacheName() {
+            return cacheName;
+        }
+
+        public Config setCacheName(String cacheName) {
+            this.cacheName = cacheName;
+            return this;
+        }
+
+        public int getMaxSize() {
+            return maxSize;
+        }
+
+        public Config setMaxSize(int maxSize) {
+            this.maxSize = maxSize;
+            return this;
+        }
+
+        public int getAppVersion() {
+            return appVersion;
+        }
+
+        /**
+         * Note: when the version update is automatically cleaned up disk space
+         * @param appVersion
+         */
+        public void setAppVersion(int appVersion) {
+            this.appVersion = appVersion;
+        }
     }
 
     public void putString(String key, String value) {

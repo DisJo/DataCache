@@ -39,14 +39,14 @@ public class MainActivity extends AppCompatActivity {
         TextView textView9 = (TextView) findViewById(R.id.tv8);
         ImageView iv = (ImageView) findViewById(R.id.iv);
 
-        String cachePath = getExternalCacheDir().getPath();
-        final DataCache dataCache = DataCache.get(this, cachePath);
+        final DataCache dataCache = DataCache.get(this);
+        DataCache otherCache = DataCache.get(this, "test");
 
         // 设置字符串
         String str = "Hello world!";
         dataCache.putString(STRING, str);
         // 设置int
-        dataCache.putInt(INT, 123);
+        otherCache.putInt(INT, 123);
         // 设置long
         dataCache.putLong(LONG, 20000l);
         // 设置double
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         dataCache.putObject(LIST, items);
 
         textView1.setText(dataCache.getString(STRING));
-        textView2.setText(dataCache.getInt(INT, 0) + "");
+        textView2.setText(otherCache.getInt(INT, 0) + "");
         textView3.setText(dataCache.getLong(LONG, 0l) + "");
         textView4.setText(dataCache.getDouble(DOUBLE, 0.0d) + "");
         textView5.setText(dataCache.getFloat(FLOAT, 0.0f) + "");
@@ -97,4 +97,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 }
