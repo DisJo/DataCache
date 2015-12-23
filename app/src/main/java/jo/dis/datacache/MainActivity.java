@@ -2,8 +2,6 @@ package jo.dis.datacache;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         TextView textView7 = (TextView) findViewById(R.id.tv6);
         TextView textView8 = (TextView) findViewById(R.id.tv7);
         TextView textView9 = (TextView) findViewById(R.id.tv8);
-        ImageView iv = (ImageView) findViewById(R.id.iv);
+        TextView textView10 = (TextView) findViewById(R.id.tv9);
+        final TextView textView11 = (TextView) findViewById(R.id.tv10);
 
         final DataCache dataCache = DataCache.get(this);
         DataCache otherCache = DataCache.get(this, "test");
@@ -86,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
         People pp = new People(23, "Jo");
         dataCache.put("T", pp);
         People ppp = (People) dataCache.getObject("T");
-        Log.d("T=================>", "People age:" + ppp.getAge() + " " + "name:" + ppp.getName());
+        textView10.setText("People age:" + ppp.getAge() + " " + "name:" + ppp.getName());
 
         // 异步设置
         dataCache.putStringAsync("Async", "asdfghjkl", new DataCache.Callback() {
             @Override
             public void finish() {
                 String str = dataCache.getString("Async");
-                Log.d("A=================>", str);
+                textView11.setText(str);
             }
         });
     }
